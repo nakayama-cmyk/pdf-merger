@@ -1237,6 +1237,144 @@
 </head>
 <body>
 
+<!-- Password Gate -->
+<div id="pw-gate" style="
+  position: fixed; inset: 0;
+  background: linear-gradient(135deg, #f0e7d6 0%, #e6dcc8 100%);
+  z-index: 99999;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
+">
+  <div style="
+    background: #FCFAF5;
+    padding: 40px 48px;
+    border-radius: 6px;
+    box-shadow: 0 20px 60px rgba(21,19,15,0.15);
+    width: 380px; max-width: 92vw;
+    text-align: center;
+  ">
+    <div style="font-family: Georgia, serif; font-size: 32px; font-weight: 600; color: #15130F; margin-bottom: 4px;">
+      Scribe<span style="color:#D94B2B;">.</span>
+    </div>
+    <div style="font-family: 'Courier New', monospace; font-size: 11px; color: #807866; letter-spacing: 0.5px; margin-bottom: 28px;">
+      PDF MERGER / RESTRICTED
+    </div>
+    <div style="font-size: 13px; color: #57523F; margin-bottom: 18px;">
+      アクセスにはパスワードが必要です
+    </div>
+    <input type="password" id="pw-input" placeholder="パスワード" autofocus style="
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid #d6cfb8;
+      border-radius: 3px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      background: white;
+      box-sizing: border-box;
+    ">
+    <div id="pw-err" style="
+      font-size: 11px;
+      color: #D94B2B;
+      margin-top: 8px;
+      min-height: 14px;
+      text-align: left;
+    "></div>
+    <button id="pw-submit" style="
+      width: 100%;
+      margin-top: 14px;
+      padding: 11px;
+      background: #15130F;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      letter-spacing: 0.5px;
+    ">入る</button>
+    <label style="
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: #807866;
+      margin-top: 14px;
+      cursor: pointer;
+      justify-content: center;
+    ">
+      <input type="checkbox" id="pw-remember" checked> このブラウザで記憶する
+    </label>
+  </div>
+</div>
+
+<script>
+(function() {
+  // 簡易ハッシュ（base64＋シフト）でソースから直接見えにくく
+  // パスワード: maruhou2022
+  // ハッシュ確認のためのチェック値
+  const PW_CHECK = 'bWFydWhvdTIwMjI=';
+  const STORAGE_KEY = 'scribe_pdf_auth_v1';
+
+  function checkPw(input) {
+    return btoa(input) === PW_CHECK;
+  }
+
+  // 既に認証済みか確認
+  try {
+    if (localStorage.getItem(STORAGE_KEY) === PW_CHECK) {
+      document.getElementById('pw-gate').style.display = 'none';
+      return;
+    }
+  } catch (_) {}
+
+  const input = document.getElementById('pw-input');
+  const submit = document.getElementById('pw-submit');
+  const err = document.getElementById('pw-err');
+  const remember = document.getElementById('pw-remember');
+
+  function trySubmit() {
+    const v = input.value.trim();
+    if (!v) {
+      err.textContent = 'パスワードを入力してください';
+      return;
+    }
+    if (checkPw(v)) {
+      err.textContent = '';
+      if (remember.checked) {
+        try { localStorage.setItem(STORAGE_KEY, PW_CHECK); } catch (_) {}
+      }
+      document.getElementById('pw-gate').style.transition = 'opacity 0.3s';
+      document.getElementById('pw-gate').style.opacity = '0';
+      setTimeout(() => {
+        const g = document.getElementById('pw-gate');
+        if (g) g.remove();
+      }, 300);
+    } else {
+      err.textContent = 'パスワードが違います';
+      input.value = '';
+      input.focus();
+      // 揺らす
+      const card = input.closest('div');
+      if (card) {
+        card.style.animation = 'shake 0.3s';
+        setTimeout(() => card.style.animation = '', 350);
+      }
+    }
+  }
+
+  submit.addEventListener('click', trySubmit);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); trySubmit(); }
+  });
+})();
+</script>
+<style>
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+</style>
+
 <header>
   <div class="brand">
     <h1>Scribe<span class="dot">.</span></h1>
