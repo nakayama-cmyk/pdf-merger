@@ -2502,6 +2502,9 @@ function renderPageMode() {
     const thumb = document.createElement('div');
     thumb.className = 'page-card-thumb';
     const cv = document.createElement('canvas');
+    cv.dataset.fileId = file.id;
+    cv.dataset.pageNum = entry.pageNum;
+    cv.dataset.rotation = entry.rotation || 0;
     thumb.appendChild(cv);
     card.appendChild(thumb);
 
@@ -2568,6 +2571,22 @@ function renderPageMode() {
   });
   boardContent.style.width = maxR + 'px';
   boardContent.style.height = maxB + 'px';
+
+  // 描画完了後、すべてのCanvasサムネに対して描画リクエストを発行
+  // （renderPageModeが連続実行されてCanvasが置き換わる場合のフォールバック）
+  requestAnimationFrame(() => {
+    boardContent.querySelectorAll('.page-card-thumb canvas').forEach(cv => {
+      // 既に描画済み（width/heightが設定済み）ならスキップ
+      if (cv.width > 50 && cv.height > 50) return;
+      const fileId = cv.dataset.fileId;
+      const pageNum = parseInt(cv.dataset.pageNum, 10);
+      const rotation = parseInt(cv.dataset.rotation || '0', 10);
+      const file = state.files.find(f => f.id === fileId);
+      if (file && pageNum) {
+        renderPageThumbnail(file, pageNum, cv, rotation);
+      }
+    });
+  });
 }
 
 // 束のファイル名ラベル編集
@@ -2771,6 +2790,11 @@ async function renderPageThumbnail(file, pageNum, canvas, rotation = 0) {
 // 即時描画（IntersectionObserverのコールバック内で呼ばれる）
 async function renderPageThumbnailNow(file, pageNum, canvas, rotation = 0) {
   const key = `${file.id}_${pageNum}_r${rotation}`;
+  // デバッグ: file.pdfがあるか確認
+  if (!file || !file.pdf) {
+    console.warn('[サムネ] file.pdf がない:', file?.name, 'pageNum:', pageNum);
+    return;
+  }
   // 親カードへ orientation 設定するヘルパー
   const setOrientation = (w, h) => {
     const cardEl = canvas.closest('.page-card');
