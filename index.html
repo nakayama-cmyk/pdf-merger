@@ -791,6 +791,14 @@
     height: auto;
     display: block;
   }
+  .page-card-thumb .thumb-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
   .page-card-info {
     font-family: var(--mono);
     font-size: 9px;
@@ -2572,12 +2580,15 @@ function renderPageMode() {
   boardContent.style.width = maxR + 'px';
   boardContent.style.height = maxB + 'px';
 
-  // 描画完了後、すべてのCanvasサムネに対して描画リクエストを発行
-  // （renderPageModeが連続実行されてCanvasが置き換わる場合のフォールバック）
-  requestAnimationFrame(() => {
+  // 描画完了後（少し遅らせて）、未描画のCanvasに対して1回だけ描画リクエスト
+  setTimeout(() => {
     boardContent.querySelectorAll('.page-card-thumb canvas').forEach(cv => {
-      // 既に描画済み（width/heightが設定済み）ならスキップ
-      if (cv.width > 50 && cv.height > 50) return;
+      // 既に <img> として描画済みならスキップ
+      const sibling = cv.nextElementSibling;
+      if (sibling && sibling.tagName === 'IMG' && sibling.classList.contains('thumb-img') && sibling.src) return;
+      // 既にリトライ済みならスキップ
+      if (cv.dataset.retried === '1') return;
+      cv.dataset.retried = '1';
       const fileId = cv.dataset.fileId;
       const pageNum = parseInt(cv.dataset.pageNum, 10);
       const rotation = parseInt(cv.dataset.rotation || '0', 10);
@@ -2586,7 +2597,7 @@ function renderPageMode() {
         renderPageThumbnail(file, pageNum, cv, rotation);
       }
     });
-  });
+  }, 300);
 }
 
 // 束のファイル名ラベル編集
@@ -2765,32 +2776,13 @@ async function runThumbRenderQueue() {
 // 公開API: 描画リクエスト（キャッシュあれば即時、なければキューで並列描画）
 async function renderPageThumbnail(file, pageNum, canvas, rotation = 0) {
   const key = `${file.id}_${pageNum}_r${rotation}`;
-  // キャッシュにあれば即時描画
-  if (pageThumbCache.has(key)) {
-    const cached = pageThumbCache.get(key);
-    const img = new Image();
-    img.onload = () => {
-      if (!canvas.isConnected) return;
-      const ctx = canvas.getContext('2d');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-      const cardEl = canvas.closest('.page-card');
-      if (cardEl) {
-        cardEl.dataset.orientation = (img.width > img.height) ? 'landscape' : 'portrait';
-      }
-    };
-    img.src = cached;
-    return;
-  }
-  // 未キャッシュ：直接キューに登録（IntersectionObserverを介さない）
+  // キャッシュ即時 or キューに投げる、いずれもrenderPageThumbnailNowに統一
   enqueueThumbRender(canvas, { file, pageNum, rotation });
 }
 
 // 即時描画（IntersectionObserverのコールバック内で呼ばれる）
 async function renderPageThumbnailNow(file, pageNum, canvas, rotation = 0) {
   const key = `${file.id}_${pageNum}_r${rotation}`;
-  // デバッグ: file.pdfがあるか確認
   if (!file || !file.pdf) {
     console.warn('[サムネ] file.pdf がない:', file?.name, 'pageNum:', pageNum);
     return;
@@ -2802,39 +2794,52 @@ async function renderPageThumbnailNow(file, pageNum, canvas, rotation = 0) {
       cardEl.dataset.orientation = (w > h) ? 'landscape' : 'portrait';
     }
   };
-  // キャッシュ再確認（並列処理中に追加された可能性）
+
+  // 描画結果を <img> として表示するヘルパー（Canvas表示のGPUバグ回避）
+  const showAsImg = (dataUrl, w, h) => {
+    if (!canvas.isConnected) return;
+    let img = canvas.nextElementSibling;
+    if (!img || img.tagName !== 'IMG' || !img.classList.contains('thumb-img')) {
+      img = document.createElement('img');
+      img.className = 'thumb-img';
+      img.style.maxWidth = '100%';
+      img.style.maxHeight = '100%';
+      img.style.width = 'auto';
+      img.style.height = 'auto';
+      img.style.display = 'block';
+      img.style.objectFit = 'contain';
+      canvas.style.display = 'none';
+      canvas.parentElement.appendChild(img);
+    }
+    img.src = dataUrl;
+    setOrientation(w, h);
+  };
+
+  // キャッシュ確認
   if (pageThumbCache.has(key)) {
     const cached = pageThumbCache.get(key);
-    const img = new Image();
-    return new Promise(res => {
-      img.onload = () => {
-        if (canvas.isConnected) {
-          const ctx = canvas.getContext('2d');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-          setOrientation(img.width, img.height);
-        }
-        res();
-      };
-      img.onerror = () => res();
-      img.src = cached;
-    });
+    // キャッシュからサイズを取得するためImageを読み込む
+    const probe = new Image();
+    probe.onload = () => showAsImg(cached, probe.width, probe.height);
+    probe.src = cached;
+    return;
   }
   try {
     const page = await file.pdf.getPage(pageNum);
     const dpr = window.devicePixelRatio || 1;
-    // 解像度をdprのみに（ボード用は元々小さいので低めでOK）
     const renderScale = 0.8 * Math.min(dpr, 1.5);
     const viewport = page.getViewport({ scale: renderScale, rotation });
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    const ctx = canvas.getContext('2d');
+    // 描画用の離れたCanvasを使う
+    const offCanvas = document.createElement('canvas');
+    offCanvas.width = viewport.width;
+    offCanvas.height = viewport.height;
+    const ctx = offCanvas.getContext('2d');
     ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, offCanvas.width, offCanvas.height);
     await page.render({ canvasContext: ctx, viewport }).promise;
-    pageThumbCache.set(key, canvas.toDataURL('image/jpeg', 0.85));
-    setOrientation(viewport.width, viewport.height);
+    const dataUrl = offCanvas.toDataURL('image/jpeg', 0.85);
+    pageThumbCache.set(key, dataUrl);
+    showAsImg(dataUrl, viewport.width, viewport.height);
   } catch (e) {
     console.warn('ページサムネ生成失敗:', file?.name, pageNum, e);
   }
