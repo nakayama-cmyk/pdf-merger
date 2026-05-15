@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/nakayama/Downloads/index_249.html -->
+<!-- saved from url=(0050)file:///C:/Users/nakayama/Downloads/index_250.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2044,13 +2044,13 @@
 
 <footer>
   <div>
-    <span class="status-dot"></span><span id="status-text">保存しました (15:34:16)</span>
+    <span class="status-dot"></span><span id="status-text">保存しました (15:42:48)</span>
   </div>
   <div id="output-info">出力: 4 ページ</div>
 </footer>
 
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
 // ── サムネ用 PDF.js workerプール ─────────────────────
 // 各ファイルのbytesから独立したPDFDocumentを複数持ち、並列getPage/renderを実現
@@ -4714,9 +4714,7 @@ async function actSplit() {
 const originalExport = exportMerged;
 window.exportMerged = async function() {}; // placeholder
 // 既存のexportMerged内でcopyPages後に回転反映が必要 → 関数を上書き
-</script>
 
-<script>
 // 既存のexportMergedを回転対応版に置き換える
 async function exportMerged() {
   const btn = document.getElementById('btn-export');
