@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/nakayama/Downloads/index_253.html -->
+<!-- saved from url=(0050)file:///C:/Users/nakayama/Downloads/index_254.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2044,7 +2044,7 @@
 
 <footer>
   <div>
-    <span class="status-dot"></span><span id="status-text">保存しました (16:06:33)</span>
+    <span class="status-dot"></span><span id="status-text">保存しました (16:08:53)</span>
   </div>
   <div id="output-info">出力: 4 ページ</div>
 </footer>
@@ -2054,12 +2054,21 @@
 const trash = [];
 
 document.addEventListener("DOMContentLoaded", function() {
-// pdfjsLibが読み込まれていない場合のフォールバック
-if (typeof pdfjsLib === 'undefined') {
-  const s = document.createElement('script');
-  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-  s.onload = () => init();
-  document.head.appendChild(s);
+// ライブラリが未定義の場合のフォールバック読み込み
+const libs = [
+  { check: 'pdfjsLib', src: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js' },
+  { check: 'PDFLib',   src: 'https://unpkg.com/pdf-lib/dist/pdf-lib.min.js' },
+  { check: 'JSZip',    src: 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js' },
+];
+const missing = libs.filter(l => typeof window[l.check] === 'undefined');
+if (missing.length > 0) {
+  let loaded = 0;
+  missing.forEach(l => {
+    const s = document.createElement('script');
+    s.src = l.src;
+    s.onload = () => { if (++loaded === missing.length) init(); };
+    document.head.appendChild(s);
+  });
   return;
 }
 init();
