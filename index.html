@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/nakayama/Downloads/index_250.html -->
+<!-- saved from url=(0050)file:///C:/Users/nakayama/Downloads/index_251.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2044,12 +2044,13 @@
 
 <footer>
   <div>
-    <span class="status-dot"></span><span id="status-text">保存しました (15:42:48)</span>
+    <span class="status-dot"></span><span id="status-text">保存しました (15:45:56)</span>
   </div>
   <div id="output-info">出力: 4 ページ</div>
 </footer>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
 // ── サムネ用 PDF.js workerプール ─────────────────────
@@ -9115,24 +9116,7 @@ if (__originalClear) __originalClear.addEventListener('click', async () => {
   }, 100);
 });
 
-</script>
 
-<!-- ゴミ箱ウィジェット -->
-<div class="trash-widget" id="trash-widget">
-  <div class="trash-panel" id="trash-panel">
-    <div class="trash-panel-header">
-      <span>ゴミ箱</span>
-      <button id="trash-empty-btn">すべて削除</button>
-    </div>
-    <div id="trash-list"><div class="trash-item"><span class="trash-item-name" title="１.pdf">１.pdf</span><button class="trash-restore-btn">復元</button></div><div class="trash-item"><span class="trash-item-name" title="マニュアル抜粋【気中濃度測定】.pdf">マニュアル抜粋【気中濃度測定】.pdf</span><button class="trash-restore-btn">復元</button></div></div>
-  </div>
-  <button class="trash-btn" id="trash-btn" title="ゴミ箱">
-    🗑️
-    <span class="trash-badge" id="trash-badge" style="display: flex;">2</span>
-  </button>
-</div>
-
-<script>
 // ── ゴミ箱 ──────────────────────────────────────────
 
 document.getElementById('trash-btn').addEventListener('click', (e) => {
@@ -9166,7 +9150,26 @@ document.getElementById('trash-empty-btn').addEventListener('click', () => {
   updateTrashUI();
 });
 updateTrashUI();
+
+}); // DOMContentLoaded
 </script>
+
+<!-- ゴミ箱ウィジェット -->
+<div class="trash-widget" id="trash-widget">
+  <div class="trash-panel" id="trash-panel">
+    <div class="trash-panel-header">
+      <span>ゴミ箱</span>
+      <button id="trash-empty-btn">すべて削除</button>
+    </div>
+    <div id="trash-list"><div class="trash-item"><span class="trash-item-name" title="１.pdf">１.pdf</span><button class="trash-restore-btn">復元</button></div><div class="trash-item"><span class="trash-item-name" title="マニュアル抜粋【気中濃度測定】.pdf">マニュアル抜粋【気中濃度測定】.pdf</span><button class="trash-restore-btn">復元</button></div></div>
+  </div>
+  <button class="trash-btn" id="trash-btn" title="ゴミ箱">
+    🗑️
+    <span class="trash-badge" id="trash-badge" style="display: flex;">2</span>
+  </button>
+</div>
+
+
 
 
 
