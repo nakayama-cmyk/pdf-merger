@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/nakayama/Downloads/index_254.html -->
+<!-- saved from url=(0050)file:///C:/Users/nakayama/Downloads/index_255.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2044,7 +2044,7 @@
 
 <footer>
   <div>
-    <span class="status-dot"></span><span id="status-text">保存しました (16:08:53)</span>
+    <span class="status-dot"></span><span id="status-text">保存しました (16:32:26)</span>
   </div>
   <div id="output-info">出力: 4 ページ</div>
 </footer>
@@ -2129,6 +2129,7 @@ const state = {
   fontFamily: '"Meiryo", "メイリオ", sans-serif',
   bold: false,
   italic: false,
+  textColor: '#000000',
   textBg: 'white',
   textBgColor: '#FFFF88',
   fill: 'none',
@@ -5584,6 +5585,7 @@ function annCreateTextInput(p, overlay, entry, editingAnn = null) {
         x: p.x, y: p.y,
         text: text,
         color: state.color,
+        textColor: state.textColor,
         fontSize: state.fontSize,
         fontFamily: state.fontFamily,
         bold: state.bold,
@@ -5993,7 +5995,7 @@ function annDraw(ctx, a) {
       ctx.fillStyle = bgColor;
       ctx.fillRect(bgX, bgY, bgW, bgH);
     }
-    ctx.fillStyle = a.color;
+    ctx.fillStyle = a.textColor || a.color;
     lines.forEach((line, i) => {
       ctx.fillText(line, a.x, a.y + i * lineHeight);
     });
@@ -7696,7 +7698,7 @@ function buildAnnPanel() {
       annApplyToSelected({ color: state.color });
     }
   });
-  propSec.appendChild(propRow('塗り', strokeSel));
+  propSec.appendChild(propRow('枠の塗り', strokeSel));
   propSec.appendChild(colorPaletteWrap);
   propSec.appendChild(hiddenColorInp);
   // swatchesは削除（不要）
@@ -7708,7 +7710,79 @@ function buildAnnPanel() {
   propSec.appendChild(fontSizeRow);
   // ⑥ スタイル
   propSec.appendChild(styleRow);
-  // ⑦ 文字背景
+  // ⑦ 文字の塗り（テキスト専用カラー）
+  const textColorWrap = (() => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'margin-bottom:8px;';
+    const themeColors = [
+      ['#000000','#FFFFFF','#1F3864','#C55A11','#375623','#2E74B5','#7030A0','#00B0F0'],
+      ['#808080','#F2F2F2','#2F5496','#E36C09','#4E7A1F','#1F6CA3','#5B2882','#0070C0'],
+      ['#595959','#D9D9D9','#203864','#984807','#375623','#17375E','#3D1366','#00538B'],
+      ['#404040','#BFBFBF','#17375E','#743F07','#2A4119','#0F2537','#2E0B4E','#003F66'],
+      ['#262626','#A6A6A6','#0F2537','#4F2A04','#1C2B0F','#0A1926','#1F0733','#002744'],
+    ];
+    const themeLabel = document.createElement('div');
+    themeLabel.textContent = 'テーマの色';
+    themeLabel.style.cssText = 'font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;margin-bottom:4px;';
+    wrap.appendChild(themeLabel);
+    const themeGrid = document.createElement('div');
+    themeGrid.style.cssText = 'display:grid;grid-template-columns:repeat(8,14px);gap:2px;margin-bottom:8px;';
+    themeColors.flat().forEach(col => {
+      const s = document.createElement('div');
+      s.style.cssText = `width:14px;height:14px;background:${col};border:1px solid rgba(0,0,0,0.2);cursor:pointer;border-radius:1px;`;
+      s.title = col;
+      s.className = 'tc-swatch';
+      s.addEventListener('mousedown', e => e.stopPropagation());
+      s.addEventListener('click', () => {
+        wrap.querySelectorAll('.tc-swatch.sel').forEach(x => { x.classList.remove('sel'); x.style.outline=''; });
+        s.classList.add('sel'); s.style.outline = '2px solid #fff'; s.style.outlineOffset = '-2px';
+        state.textColor = col;
+        annApplyToSelected({ textColor: col });
+      });
+      themeGrid.appendChild(s);
+    });
+    wrap.appendChild(themeGrid);
+    const stdLabel = document.createElement('div');
+    stdLabel.textContent = '標準の色';
+    stdLabel.style.cssText = 'font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;margin-bottom:4px;';
+    wrap.appendChild(stdLabel);
+    const stdColors = ['#000000','#C00000','#FF0000','#FFC000','#FFFF00','#92D050','#00B050','#00B0F0','#0070C0','#7030A0'];
+    const stdGrid = document.createElement('div');
+    stdGrid.style.cssText = 'display:grid;grid-template-columns:repeat(10,14px);gap:2px;margin-bottom:6px;';
+    stdColors.forEach(col => {
+      const s = document.createElement('div');
+      s.style.cssText = `width:14px;height:14px;background:${col};border:1px solid rgba(0,0,0,0.2);cursor:pointer;border-radius:1px;`;
+      s.title = col;
+      s.className = 'tc-swatch';
+      s.addEventListener('mousedown', e => e.stopPropagation());
+      s.addEventListener('click', () => {
+        wrap.querySelectorAll('.tc-swatch.sel').forEach(x => { x.classList.remove('sel'); x.style.outline=''; });
+        s.classList.add('sel'); s.style.outline = '2px solid #fff'; s.style.outlineOffset = '-2px';
+        state.textColor = col;
+        annApplyToSelected({ textColor: col });
+      });
+      stdGrid.appendChild(s);
+    });
+    wrap.appendChild(stdGrid);
+    const otherBtn = document.createElement('button');
+    otherBtn.textContent = 'その他の色...';
+    otherBtn.style.cssText = 'width:100%;padding:5px 8px;font-size:11px;font-family:var(--mono);background:rgba(245,243,238,0.1);border:1px solid rgba(245,243,238,0.4);color:var(--ink);border-radius:2px;cursor:pointer;text-align:left;letter-spacing:0.05em;';
+    const tcHidden = document.createElement('input');
+    tcHidden.type = 'color'; tcHidden.value = state.textColor;
+    tcHidden.style.cssText = 'position:absolute;width:0;height:0;opacity:0;pointer-events:none;';
+    tcHidden.addEventListener('input', e => {
+      state.textColor = e.target.value;
+      wrap.querySelectorAll('.tc-swatch.sel').forEach(x => { x.classList.remove('sel'); x.style.outline=''; });
+      annApplyToSelected({ textColor: e.target.value });
+    });
+    otherBtn.addEventListener('click', () => tcHidden.click());
+    wrap.appendChild(tcHidden);
+    wrap.appendChild(otherBtn);
+    return wrap;
+  })();
+  propSec.appendChild(propRow('文字の塗り', document.createElement('span')));
+  propSec.appendChild(textColorWrap);
+  // ⑧ 文字背景
   propSec.appendChild(textBgRow);
   propSec.appendChild(bgColorRow);
 
