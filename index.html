@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/nakayama/Downloads/index_255.html -->
+<!-- saved from url=(0050)file:///C:/Users/nakayama/Downloads/index_259.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -629,25 +629,16 @@
     border-bottom: 1px solid var(--line);
   }
   .section-title h2 {
-    font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
-    font-weight: 500;
-    font-size: 28px;
-    font-style: italic;
-    letter-spacing: 0.005em;
+    font-family: 'Inter', 'Helvetica Neue', 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    font-size: 26px;
+    font-style: normal;
+    letter-spacing: 0.35em;
     color: #0d0d0d;
     line-height: 1;
   }
   .section-title .count {
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.55);
-    background: rgba(0, 0, 0, 0.06);
-    border: 1px solid rgba(0,0,0,0.12);
-    padding: 4px 12px;
-    border-radius: 1px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    display: none;
   }
   .section-title .right { margin-left: auto; display: flex; gap: 8px; }
 
@@ -1971,7 +1962,7 @@
 <header>
   <div class="brand">
     <div class="brand-logo" aria-label="M Trace. - PDF WORKSPACE"></div>
-    <span class="tag">/ MTRC-001</span>
+    
   </div>
   <div class="header-actions">
     <input type="file" id="file-input" accept="application/pdf,image/*,.docx,.xlsx,.pptx,.doc,.xls,.ppt" multiple="">
@@ -2031,20 +2022,20 @@
   <!-- Workspace -->
   <div id="workspace" style="display: block;">
     <div class="section-title">
-      <h2 id="section-heading">ページ一覧</h2>
+      <h2 id="section-heading">PAGE MAP</h2>
       <span class="count" id="section-count">4 / 4 ページ出力</span>
     </div>
 
     <!-- Whiteboard -->
     <div class="page-grid" id="page-grid">
-      <div class="board-content" id="board-content" style="width: 800px; height: 600px;"><div class="page-card" data-idx="0" data-rotation="0" data-group="g_f_1778825753869_cgaiu9" data-group-pos="solo" data-orientation="portrait" style="--group-color: #1B4B3A; --group-glow: rgba(27, 75, 58, 0.15); left: 225px; top: 144px; width: 125px;"><div class="stack-shadow s3"></div><div class="stack-shadow s2"></div><div class="stack-shadow s1"></div><div class="stack-count-badge">4枚</div><div class="page-card-order">01-04</div><div class="rotation-badge">↻ 0°</div><div class="page-card-thumb"><canvas data-file-id="f_1778825753869_cgaiu9" data-page-num="1" data-rotation="0" data-entry-uid="pg_mp6ixc0g_z42nvi_1" data-retried="1"></canvas><img class="thumb-img" src="data:image/jpeg;base64,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"></div><div class="page-card-info"><span>束 4/4</span><span>ダブルクリックで詳細</span></div><div class="group-name-label" title="ダブルクリックで名前を編集" data-group-id="g_f_1778825753869_cgaiu9">マニュアル抜粋【気中濃度測定】</div></div></div>
+      <div class="board-content" id="board-content" style="width: 800px; height: 600px;"><div class="page-card" data-idx="0" data-rotation="0" data-group="g_f_1778825753869_cgaiu9" data-group-pos="solo" data-orientation="portrait" style="--group-color: #1B4B3A; --group-glow: rgba(27, 75, 58, 0.15); width: 125px; left: 49px; top: 56px;"><div class="stack-shadow s3"></div><div class="stack-shadow s2"></div><div class="stack-shadow s1"></div><div class="stack-count-badge">4枚</div><div class="page-card-order">01-04</div><div title="注釈が含まれています" style="position: absolute; top: 32px; left: 8px; background: rgb(27, 75, 58); color: white; font-family: var(--mono); font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 2px; z-index: 10;">✎ 注釈</div><div class="rotation-badge">↻ 0°</div><div class="page-card-thumb"><canvas data-file-id="f_1778825753869_cgaiu9" data-page-num="1" data-rotation="0" data-entry-uid="pg_mp6ixc0g_z42nvi_1" width="0" height="0" style="display: none;"></canvas><img class="thumb-img" src="data:image/jpeg;base64,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"></div><div class="page-card-info"><span>束 4/4</span><span>ダブルクリックで詳細</span></div><div class="group-name-label" title="ダブルクリックで名前を編集" data-group-id="g_f_1778825753869_cgaiu9">マニュアル抜粋【気中濃度測定】</div></div></div>
     </div>
   </div>
 </main>
 
 <footer>
   <div>
-    <span class="status-dot"></span><span id="status-text">保存しました (16:32:26)</span>
+    <span class="status-dot"></span><span id="status-text">保存しました (16:47:34)</span>
   </div>
   <div id="output-info">出力: 4 ページ</div>
 </footer>
@@ -2129,7 +2120,7 @@ const state = {
   fontFamily: '"Meiryo", "メイリオ", sans-serif',
   bold: false,
   italic: false,
-  textColor: '#000000',
+  textColor: '#FF0000',
   textBg: 'white',
   textBgColor: '#FFFF88',
   fill: 'none',
@@ -7710,78 +7701,88 @@ function buildAnnPanel() {
   propSec.appendChild(fontSizeRow);
   // ⑥ スタイル
   propSec.appendChild(styleRow);
-  // ⑦ 文字の塗り（テキスト専用カラー）
-  const textColorWrap = (() => {
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'margin-bottom:8px;';
-    const themeColors = [
-      ['#000000','#FFFFFF','#1F3864','#C55A11','#375623','#2E74B5','#7030A0','#00B0F0'],
-      ['#808080','#F2F2F2','#2F5496','#E36C09','#4E7A1F','#1F6CA3','#5B2882','#0070C0'],
-      ['#595959','#D9D9D9','#203864','#984807','#375623','#17375E','#3D1366','#00538B'],
-      ['#404040','#BFBFBF','#17375E','#743F07','#2A4119','#0F2537','#2E0B4E','#003F66'],
-      ['#262626','#A6A6A6','#0F2537','#4F2A04','#1C2B0F','#0A1926','#1F0733','#002744'],
-    ];
-    const themeLabel = document.createElement('div');
-    themeLabel.textContent = 'テーマの色';
-    themeLabel.style.cssText = 'font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;margin-bottom:4px;';
-    wrap.appendChild(themeLabel);
-    const themeGrid = document.createElement('div');
-    themeGrid.style.cssText = 'display:grid;grid-template-columns:repeat(8,14px);gap:2px;margin-bottom:8px;';
-    themeColors.flat().forEach(col => {
-      const s = document.createElement('div');
-      s.style.cssText = `width:14px;height:14px;background:${col};border:1px solid rgba(0,0,0,0.2);cursor:pointer;border-radius:1px;`;
-      s.title = col;
-      s.className = 'tc-swatch';
-      s.addEventListener('mousedown', e => e.stopPropagation());
-      s.addEventListener('click', () => {
-        wrap.querySelectorAll('.tc-swatch.sel').forEach(x => { x.classList.remove('sel'); x.style.outline=''; });
-        s.classList.add('sel'); s.style.outline = '2px solid #fff'; s.style.outlineOffset = '-2px';
-        state.textColor = col;
-        annApplyToSelected({ textColor: col });
-      });
-      themeGrid.appendChild(s);
+  // ⑦ 文字の塗り（セレクト＋折りたたみ）
+  const tcSel = document.createElement('select');
+  [['', ''], ['none', 'なし'], ['custom', '色の設定']].forEach(([v, t]) => {
+    const o = document.createElement('option');
+    o.value = v; o.textContent = t;
+    tcSel.appendChild(o);
+  });
+  tcSel.value = '';
+  const tcPaletteWrap = document.createElement('div');
+  tcPaletteWrap.style.cssText = 'margin-bottom:8px;display:none;';
+  const tcThemeColors = [
+    ['#000000','#FFFFFF','#1F3864','#C55A11','#375623','#2E74B5','#7030A0','#00B0F0'],
+    ['#808080','#F2F2F2','#2F5496','#E36C09','#4E7A1F','#1F6CA3','#5B2882','#0070C0'],
+    ['#595959','#D9D9D9','#203864','#984807','#375623','#17375E','#3D1366','#00538B'],
+    ['#404040','#BFBFBF','#17375E','#743F07','#2A4119','#0F2537','#2E0B4E','#003F66'],
+    ['#262626','#A6A6A6','#0F2537','#4F2A04','#1C2B0F','#0A1926','#1F0733','#002744'],
+  ];
+  const tcThemeLabel = document.createElement('div');
+  tcThemeLabel.textContent = 'テーマの色';
+  tcThemeLabel.style.cssText = 'font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;margin-bottom:4px;';
+  tcPaletteWrap.appendChild(tcThemeLabel);
+  const tcThemeGrid = document.createElement('div');
+  tcThemeGrid.style.cssText = 'display:grid;grid-template-columns:repeat(8,14px);gap:2px;margin-bottom:8px;';
+  tcThemeColors.flat().forEach(col => {
+    const s = document.createElement('div');
+    s.style.cssText = `width:14px;height:14px;background:${col};border:1px solid rgba(0,0,0,0.2);cursor:pointer;border-radius:1px;`;
+    s.title = col; s.className = 'tc-swatch';
+    s.addEventListener('mousedown', e => e.stopPropagation());
+    s.addEventListener('click', () => {
+      tcPaletteWrap.querySelectorAll('.tc-swatch.sel').forEach(x => { x.classList.remove('sel'); x.style.outline=''; x.style.outlineOffset=''; });
+      s.classList.add('sel'); s.style.outline = '2px solid #fff'; s.style.outlineOffset = '-2px';
+      state.textColor = col; annApplyToSelected({ textColor: col });
     });
-    wrap.appendChild(themeGrid);
-    const stdLabel = document.createElement('div');
-    stdLabel.textContent = '標準の色';
-    stdLabel.style.cssText = 'font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;margin-bottom:4px;';
-    wrap.appendChild(stdLabel);
-    const stdColors = ['#000000','#C00000','#FF0000','#FFC000','#FFFF00','#92D050','#00B050','#00B0F0','#0070C0','#7030A0'];
-    const stdGrid = document.createElement('div');
-    stdGrid.style.cssText = 'display:grid;grid-template-columns:repeat(10,14px);gap:2px;margin-bottom:6px;';
-    stdColors.forEach(col => {
-      const s = document.createElement('div');
-      s.style.cssText = `width:14px;height:14px;background:${col};border:1px solid rgba(0,0,0,0.2);cursor:pointer;border-radius:1px;`;
-      s.title = col;
-      s.className = 'tc-swatch';
-      s.addEventListener('mousedown', e => e.stopPropagation());
-      s.addEventListener('click', () => {
-        wrap.querySelectorAll('.tc-swatch.sel').forEach(x => { x.classList.remove('sel'); x.style.outline=''; });
-        s.classList.add('sel'); s.style.outline = '2px solid #fff'; s.style.outlineOffset = '-2px';
-        state.textColor = col;
-        annApplyToSelected({ textColor: col });
-      });
-      stdGrid.appendChild(s);
+    tcThemeGrid.appendChild(s);
+  });
+  tcPaletteWrap.appendChild(tcThemeGrid);
+  const tcStdLabel = document.createElement('div');
+  tcStdLabel.textContent = '標準の色';
+  tcStdLabel.style.cssText = 'font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;margin-bottom:4px;';
+  tcPaletteWrap.appendChild(tcStdLabel);
+  const tcStdColors = ['#000000','#C00000','#FF0000','#FFC000','#FFFF00','#92D050','#00B050','#00B0F0','#0070C0','#7030A0'];
+  const tcStdGrid = document.createElement('div');
+  tcStdGrid.style.cssText = 'display:grid;grid-template-columns:repeat(10,14px);gap:2px;margin-bottom:6px;';
+  tcStdColors.forEach(col => {
+    const s = document.createElement('div');
+    s.style.cssText = `width:14px;height:14px;background:${col};border:1px solid rgba(0,0,0,0.2);cursor:pointer;border-radius:1px;`;
+    s.title = col; s.className = 'tc-swatch';
+    s.addEventListener('mousedown', e => e.stopPropagation());
+    s.addEventListener('click', () => {
+      tcPaletteWrap.querySelectorAll('.tc-swatch.sel').forEach(x => { x.classList.remove('sel'); x.style.outline=''; x.style.outlineOffset=''; });
+      s.classList.add('sel'); s.style.outline = '2px solid #fff'; s.style.outlineOffset = '-2px';
+      state.textColor = col; annApplyToSelected({ textColor: col });
     });
-    wrap.appendChild(stdGrid);
-    const otherBtn = document.createElement('button');
-    otherBtn.textContent = 'その他の色...';
-    otherBtn.style.cssText = 'width:100%;padding:5px 8px;font-size:11px;font-family:var(--mono);background:rgba(245,243,238,0.1);border:1px solid rgba(245,243,238,0.4);color:var(--ink);border-radius:2px;cursor:pointer;text-align:left;letter-spacing:0.05em;';
-    const tcHidden = document.createElement('input');
-    tcHidden.type = 'color'; tcHidden.value = state.textColor;
-    tcHidden.style.cssText = 'position:absolute;width:0;height:0;opacity:0;pointer-events:none;';
-    tcHidden.addEventListener('input', e => {
-      state.textColor = e.target.value;
-      wrap.querySelectorAll('.tc-swatch.sel').forEach(x => { x.classList.remove('sel'); x.style.outline=''; });
-      annApplyToSelected({ textColor: e.target.value });
-    });
-    otherBtn.addEventListener('click', () => tcHidden.click());
-    wrap.appendChild(tcHidden);
-    wrap.appendChild(otherBtn);
-    return wrap;
-  })();
-  propSec.appendChild(propRow('文字の塗り', document.createElement('span')));
-  propSec.appendChild(textColorWrap);
+    tcStdGrid.appendChild(s);
+  });
+  tcPaletteWrap.appendChild(tcStdGrid);
+  const tcOtherBtn = document.createElement('button');
+  tcOtherBtn.textContent = 'その他の色...';
+  tcOtherBtn.style.cssText = 'width:100%;padding:5px 8px;font-size:11px;font-family:var(--mono);background:rgba(245,243,238,0.1);border:1px solid rgba(245,243,238,0.4);color:var(--ink);border-radius:2px;cursor:pointer;text-align:left;letter-spacing:0.05em;';
+  const tcHidden = document.createElement('input');
+  tcHidden.type = 'color'; tcHidden.value = state.textColor;
+  tcHidden.style.cssText = 'position:absolute;width:0;height:0;opacity:0;pointer-events:none;';
+  tcHidden.addEventListener('input', e => {
+    state.textColor = e.target.value;
+    tcPaletteWrap.querySelectorAll('.tc-swatch.sel').forEach(x => { x.classList.remove('sel'); x.style.outline=''; x.style.outlineOffset=''; });
+    annApplyToSelected({ textColor: e.target.value });
+  });
+  tcOtherBtn.addEventListener('click', () => tcHidden.click());
+  tcPaletteWrap.appendChild(tcHidden);
+  tcPaletteWrap.appendChild(tcOtherBtn);
+  tcSel.addEventListener('change', e => {
+    const show = e.target.value === 'custom';
+    tcPaletteWrap.style.display = show ? 'block' : 'none';
+    if (e.target.value === 'none') {
+      state.textColor = 'transparent';
+      annApplyToSelected({ textColor: 'transparent' });
+    } else if (e.target.value === 'custom') {
+      annApplyToSelected({ textColor: state.textColor });
+    }
+  });
+  propSec.appendChild(propRow('文字の塗り', tcSel));
+  propSec.appendChild(tcPaletteWrap);
   // ⑧ 文字背景
   propSec.appendChild(textBgRow);
   propSec.appendChild(bgColorRow);
@@ -9257,11 +9258,11 @@ updateTrashUI();
       <span>ゴミ箱</span>
       <button id="trash-empty-btn">すべて削除</button>
     </div>
-    <div id="trash-list"><div class="trash-item"><span class="trash-item-name" title="１.pdf">１.pdf</span><button class="trash-restore-btn">復元</button></div><div class="trash-item"><span class="trash-item-name" title="マニュアル抜粋【気中濃度測定】.pdf">マニュアル抜粋【気中濃度測定】.pdf</span><button class="trash-restore-btn">復元</button></div></div>
+    <div id="trash-list"><div class="trash-empty">ゴミ箱は空です</div></div>
   </div>
   <button class="trash-btn" id="trash-btn" title="ゴミ箱">
     🗑️
-    <span class="trash-badge" id="trash-badge" style="display: flex;">2</span>
+    <span class="trash-badge" id="trash-badge" style="display: none;">0</span>
   </button>
 </div>
 
