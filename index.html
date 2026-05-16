@@ -1227,16 +1227,16 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 32px;
+    padding: 32px 600px;
     position: relative;
-    overflow: hidden;
+    cursor: grab;
   }
+  .viewer-main:active { cursor: grabbing; }
   #viewer-zoom-wrap {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    width: 100%;
-    min-width: 0;
+    flex-shrink: 0;
   }
   .viewer-page-wrap {
     background: white;
@@ -1245,6 +1245,7 @@
     transform-origin: top center;
     transition: transform 0.05s linear;
     margin: 0 auto;
+    flex-shrink: 0;
   }
   .viewer-page-wrap canvas {
     display: block;
@@ -3931,12 +3932,42 @@ function renderExpansionModal() {
   overlayCanvas.className = 'ann-overlay tool-' + state.tool;
   overlayCanvas.id = 'viewer-ann-overlay';
   pageWrap.appendChild(overlayCanvas);
+
+  // overlayCanvas上でのドラッグで横スクロール（mousedownと並行して動作）
+  let overlayPanState = null;
+  overlayCanvas.addEventListener('pointerdown', e => {
+    overlayPanState = { startX: e.clientX + main.scrollLeft, startY: e.clientY + main.scrollTop };
+  });
+  overlayCanvas.addEventListener('pointermove', e => {
+    if (!overlayPanState || e.buttons === 0) { overlayPanState = null; return; }
+    main.scrollLeft = overlayPanState.startX - e.clientX;
+    main.scrollTop = overlayPanState.startY - e.clientY;
+  });
+  overlayCanvas.addEventListener('pointerup', () => { overlayPanState = null; });
+  overlayCanvas.addEventListener('pointercancel', () => { overlayPanState = null; });
   // 中央ページの右クリック → 現在表示中ページに対するメニュー
   pageWrap.addEventListener('contextmenu', e => {
     showViewerContextMenu(e, state.viewerMemberIdx);
   });
   zoomWrap.appendChild(pageWrap);
   main.appendChild(zoomWrap);
+
+  // viewer-mainの余白でドラッグしてパン（上下左右）
+  let panState = null;
+  main.addEventListener('pointerdown', e => {
+    if (e.target.closest('button, select, input')) return;
+    // overlayCanvas上はannOnMouseDownに任せる
+    if (e.target.id === 'viewer-ann-overlay') return;
+    panState = { startX: e.clientX + main.scrollLeft, startY: e.clientY + main.scrollTop };
+    main.setPointerCapture(e.pointerId);
+  });
+  main.addEventListener('pointermove', e => {
+    if (!panState || e.buttons === 0) { panState = null; return; }
+    main.scrollLeft = panState.startX - e.clientX;
+    main.scrollTop = panState.startY - e.clientY;
+  });
+  main.addEventListener('pointerup', () => { panState = null; });
+  main.addEventListener('pointercancel', () => { panState = null; });
 
   // ズームコントロール（右下に固定）
   const zoomCtrl = document.createElement('div');
@@ -3971,6 +4002,18 @@ function renderExpansionModal() {
   }, { passive: false });
 
   body.appendChild(main);
+
+  // 左右スクロール可能にするため初期scrollLeftを中央に設定
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (main.scrollWidth > main.clientWidth) {
+        main.scrollLeft = (main.scrollWidth - main.clientWidth) / 2;
+      } else {
+        // スクロール幅がない場合でも500px分余白を確保
+        main.scrollLeft = 500;
+      }
+    });
+  });
 
   // ── 右パネル（プロパティ・印鑑）
   body.appendChild(buildAnnPanel());
@@ -4127,13 +4170,13 @@ async function renderViewerMainPage(file, entry, canvas) {
     if (seq !== _viewerRenderSeq) return;
 
     const baseVp = page.getViewport({ scale: 1 });
-    const targetH = 850;
-    const logicalScale = Math.min(2.5, targetH / baseVp.height);
+    const targetH = 1100;
+    const logicalScale = Math.min(3.0, targetH / baseVp.height);
     state.viewerScale = logicalScale;
     entry._viewerScale = logicalScale;
     const rotation = entry.rotation || 0;
     const dpr = window.devicePixelRatio || 1;
-    const renderBoost = 1.75;
+    const renderBoost = 2.0;
     const renderScale = logicalScale * dpr * renderBoost;
     const renderViewport = page.getViewport({ scale: renderScale, rotation });
     const displayViewport = page.getViewport({ scale: logicalScale, rotation });
@@ -4187,16 +4230,36 @@ async function renderViewerMainPage(file, entry, canvas) {
 
 // ビューア内のズーム倍率を適用（CSS transform で表示エリアだけスケール）
 function applyViewerZoom(z, silent = false) {
-  // 範囲制限
   z = Math.max(0.25, Math.min(4.0, z));
-  // 小数誤差をまるめ
   z = Math.round(z * 100) / 100;
   state.viewerZoom = z;
   const pageWrap = document.getElementById('viewer-page-wrap');
+  const zoomWrap = document.getElementById('viewer-zoom-wrap');
   if (pageWrap) {
+    pageWrap.style.zoom = '';
     pageWrap.style.transform = (z !== 1.0) ? `scale(${z})` : '';
+    pageWrap.style.transformOrigin = 'top center';
+    // scaleはDOMサイズを変えないのでマージンで実サイズを確保
+    if (z > 1.0) {
+      const extraW = pageWrap.offsetWidth * (z - 1) / 2;
+      const extraH = pageWrap.offsetHeight * (z - 1);
+      pageWrap.style.marginLeft = `${extraW}px`;
+      pageWrap.style.marginRight = `${extraW}px`;
+      pageWrap.style.marginBottom = `${extraH}px`;
+    } else {
+      pageWrap.style.marginLeft = '';
+      pageWrap.style.marginRight = '';
+      pageWrap.style.marginBottom = '';
+    }
+    // scrollLeftを中央に設定して左右どちらにもスクロール可能に
+    const viewerMain = document.querySelector('.viewer-main');
+    if (viewerMain) {
+      setTimeout(() => {
+        const maxScroll = viewerMain.scrollWidth - viewerMain.clientWidth;
+        if (maxScroll > 0) viewerMain.scrollLeft = maxScroll / 2;
+      }, 50);
+    }
   }
-  // パーセント表示更新
   const pct = document.querySelector('.viewer-zoom-pct');
   if (pct) pct.textContent = Math.round(z * 100) + '%';
 }
@@ -4343,6 +4406,33 @@ async function extractCurrentViewerPage() {
   scheduleSave();
   statusText.textContent = '取り出しました';
 }
+
+// スペースキーでパンモード
+window._spacePan = false;
+window._spacePanKey = false;
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && !e.target.matches('input,textarea,[contenteditable]')) {
+    window._spacePanKey = true;
+    window._spacePan = true;
+    const overlay = document.getElementById('viewer-ann-overlay');
+    if (overlay) overlay.style.cursor = 'grab';
+    e.preventDefault();
+    e.stopPropagation();
+  }
+}, true);
+document.addEventListener('keyup', e => {
+  if (e.code === 'Space') {
+    window._spacePanKey = false;
+    // mouseupで_spacePanをリセットするのでここではしない
+    const overlay = document.getElementById('viewer-ann-overlay');
+    if (overlay) overlay.style.cursor = '';
+  }
+}, true);
+document.addEventListener('mouseup', () => {
+  if (!window._spacePanKey) {
+    window._spacePan = false;
+  }
+});
 
 // Esc / 矢印キーでビューア操作
 document.addEventListener('keydown', e => {
@@ -4991,7 +5081,7 @@ async function exportAsJpeg(quality = 0.92) {
           // 注釈は viewerScale × 回転後座標系 で保存されている
           const viewerScale = entry._viewerScale || (() => {
             const baseVp0 = page.getViewport({ scale: 1 });
-            const targetH = 850;
+            const targetH = 1100;
             return Math.min(2.5, targetH / baseVp0.height);
           })();
           ctx.save();
@@ -5245,8 +5335,29 @@ function annOnMouseDown(e, overlay, entry) {
   const p = getAnnMousePos(e, overlay);
   const anns = getEntryAnnotations(entry);
 
+  // スペースキー押しながら→常にパン
+  if (window._spacePan) {
+    const viewerMain = document.querySelector('.viewer-main');
+    if (viewerMain) {
+      const startX = e.clientX + viewerMain.scrollLeft;
+      const startY = e.clientY + viewerMain.scrollTop;
+      const onMove = ev => {
+        viewerMain.scrollLeft = startX - ev.clientX;
+        viewerMain.scrollTop = startY - ev.clientY;
+      };
+      const onUp = () => {
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+      };
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+      e.preventDefault();
+      return;
+    }
+  }
+
   if (state.tool === 'select') {
-    // 選択中の注釈にハンドル判定（リサイズ・端点・頂点）
+    // ハンドル判定
     if (state.annSelectedId) {
       const sel = anns.find(a => a.id === state.annSelectedId);
       if (sel) {
@@ -5254,34 +5365,44 @@ function annOnMouseDown(e, overlay, entry) {
         if (handle) {
           annDrawing = true;
           const origCopy = {...sel};
-          if (sel.type === 'polygon' && sel.points) {
-            origCopy.points = sel.points.map(pt => ({...pt}));
-          }
+          if (sel.type === 'polygon' && sel.points) origCopy.points = sel.points.map(pt => ({...pt}));
           annDragOffset = { mode: 'resize', handle, orig: origCopy };
-          return;
+          return; // パン登録しない
         }
       }
     }
-    // 通常のヒットテスト
-    let hit = null;
-    for (let i = anns.length - 1; i >= 0; i--) {
-      if (annHitTest(anns[i], p)) { hit = anns[i]; break; }
-    }
+    // ヒットテスト
+    const hit = [...anns].reverse().find(a => annHitTest(a, p));
     if (hit) {
       state.annSelectedId = hit.id;
       annDrawing = true;
       const origCopy = {...hit};
-      if (hit.type === 'polygon' && hit.points) {
-        origCopy.points = hit.points.map(pt => ({...pt}));
-      }
+      if (hit.type === 'polygon' && hit.points) origCopy.points = hit.points.map(pt => ({...pt}));
       annDragOffset = { x: p.x, y: p.y, orig: origCopy };
-    } else {
-      state.annSelectedId = null;
+      drawAllAnnotations(entry);
+      return; // パン登録しない
     }
+    // 空白クリック→選択解除＋パン
+    state.annSelectedId = null;
     drawAllAnnotations(entry);
+    const viewerMain = document.querySelector('.viewer-main');
+    if (viewerMain) {
+      const startX = e.clientX + viewerMain.scrollLeft;
+      const startY = e.clientY + viewerMain.scrollTop;
+      const onMove = ev => {
+        viewerMain.scrollLeft = startX - ev.clientX;
+        viewerMain.scrollTop = startY - ev.clientY;
+      };
+      const onUp = () => {
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+      };
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+      e.preventDefault();
+    }
     return;
   }
-
   if (state.tool === 'text') {
     e.preventDefault();
     annCreateTextInput(p, overlay, entry);
@@ -5782,7 +5903,7 @@ async function overlayAnnotationsOnThumb(canvas, file, page, baseDataUrl, w, h, 
     // viewerScaleはrotationなしのbaseVpから計算（renderViewerMainPageと同じ）
     const baseVpNoRot = page.getViewport({ scale: 1, rotation: 0 });
     const viewerScale = (entry && entry._viewerScale) ||
-      Math.min(2.5, 850 / baseVpNoRot.height);
+      Math.min(3.0, 1100 / baseVpNoRot.height);
 
     // overlayのサイズ（注釈座標の基準）= rotationなしbaseVp × viewerScale
     const overlayW = baseVpNoRot.width * viewerScale;
@@ -6080,7 +6201,21 @@ function annDrawSelection(ctx, a) {
 }
 
 // 8方向ハンドル（矩形）
+function getCanvasToScreen() {
+  const overlay = document.getElementById('viewer-ann-overlay');
+  if (!overlay || !overlay.width) return 1;
+  const rectW = overlay.getBoundingClientRect().width;
+  return rectW > 0 ? rectW / overlay.width : 1;
+}
+
 function drawResizeHandles(ctx, x1, y1, x2, y2) {
+  const canvasToScreen = getCanvasToScreen();
+  // スクリーン上の図形サイズを計算
+  const screenW = (x2 - x1) * canvasToScreen;
+  const screenH = (y2 - y1) * canvasToScreen;
+  // スクリーン上で40px未満の辺があればハンドル非表示
+  if (screenW < 40 || screenH < 40) return;
+
   const cx = (x1 + x2) / 2;
   const cy = (y1 + y2) / 2;
   const handles = [
@@ -6088,36 +6223,40 @@ function drawResizeHandles(ctx, x1, y1, x2, y2) {
     { x: x1, y: cy },                   { x: x2, y: cy },
     { x: x1, y: y2 }, { x: cx, y: y2 }, { x: x2, y: y2 },
   ];
+  // スクリーン上で4px固定になるcanvasピクセル数
+  const sz = 4 / canvasToScreen;
   ctx.save();
   ctx.fillStyle = 'white';
   ctx.strokeStyle = '#2B59C3';
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 1.5 / canvasToScreen;
   handles.forEach(h => {
-    ctx.fillRect(h.x - 4, h.y - 4, 8, 8);
-    ctx.strokeRect(h.x - 4, h.y - 4, 8, 8);
+    ctx.fillRect(h.x - sz, h.y - sz, sz * 2, sz * 2);
+    ctx.strokeRect(h.x - sz, h.y - sz, sz * 2, sz * 2);
   });
   ctx.restore();
 }
 
 // 端点ハンドル（線・多角形の頂点）
 function drawEndpointHandles(ctx, points) {
+  const canvasToScreen = getCanvasToScreen();
+  const r = 4 / canvasToScreen;
   ctx.save();
   ctx.fillStyle = 'white';
   ctx.strokeStyle = '#2B59C3';
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 1.5 / canvasToScreen;
   points.forEach(pt => {
     ctx.beginPath();
-    ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+    ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
   });
   ctx.restore();
 }
 
-// マウス位置からハンドル種別を判定
-// 戻り値: 'nw'/'n'/'ne'/'e'/'se'/'s'/'sw'/'w' (矩形) / 'p0'..'pN' (線/多角形) / null
 function detectHandle(a, p) {
-  const TOL = 8;
+  const canvasToScreen = getCanvasToScreen();
+  // スクリーン上8pxに相当するcanvasピクセル
+  const TOL = Math.max(4, 8 / canvasToScreen);
   if (a.type === 'rect' || a.type === 'highlight' || a.type === 'stamp') {
     const x1 = Math.min(a.x, a.x+a.w);
     const y1 = Math.min(a.y, a.y+a.h);
@@ -8240,7 +8379,7 @@ async function renderAnnotationLayerForEntry(entry, outScale = 4.0) {
   if (!viewerScale) {
     // viewerScale を再計算（renderViewerMainPageと同じロジック）
     const baseVp0 = page.getViewport({ scale: 1 });
-    const targetH = 850;
+    const targetH = 1100;
     viewerScale = Math.min(2.5, targetH / baseVp0.height);
   }
 
