@@ -6201,6 +6201,7 @@ function annDrawSelection(ctx, a) {
 }
 
 // 8方向ハンドル（矩形）
+// canvas座標→スクリーン座標の変換比率（ゼロ除算ガード付き）
 function getCanvasToScreen() {
   const overlay = document.getElementById('viewer-ann-overlay');
   if (!overlay || !overlay.width) return 1;
@@ -6210,11 +6211,8 @@ function getCanvasToScreen() {
 
 function drawResizeHandles(ctx, x1, y1, x2, y2) {
   const canvasToScreen = getCanvasToScreen();
-  // スクリーン上の図形サイズを計算
-  const screenW = (x2 - x1) * canvasToScreen;
-  const screenH = (y2 - y1) * canvasToScreen;
   // スクリーン上で40px未満の辺があればハンドル非表示
-  if (screenW < 40 || screenH < 40) return;
+  if ((x2 - x1) * canvasToScreen < 40 || (y2 - y1) * canvasToScreen < 40) return;
 
   const cx = (x1 + x2) / 2;
   const cy = (y1 + y2) / 2;
@@ -6223,7 +6221,6 @@ function drawResizeHandles(ctx, x1, y1, x2, y2) {
     { x: x1, y: cy },                   { x: x2, y: cy },
     { x: x1, y: y2 }, { x: cx, y: y2 }, { x: x2, y: y2 },
   ];
-  // スクリーン上で4px固定になるcanvasピクセル数
   const sz = 4 / canvasToScreen;
   ctx.save();
   ctx.fillStyle = 'white';
@@ -6253,9 +6250,10 @@ function drawEndpointHandles(ctx, points) {
   ctx.restore();
 }
 
+// マウス位置からハンドル種別を判定
+// 戻り値: 'nw'/'n'/'ne'/'e'/'se'/'s'/'sw'/'w' (矩形) / 'p0'..'pN' (線/多角形) / null
 function detectHandle(a, p) {
   const canvasToScreen = getCanvasToScreen();
-  // スクリーン上8pxに相当するcanvasピクセル
   const TOL = Math.max(4, 8 / canvasToScreen);
   if (a.type === 'rect' || a.type === 'highlight' || a.type === 'stamp') {
     const x1 = Math.min(a.x, a.x+a.w);
