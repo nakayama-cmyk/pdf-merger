@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<!-- saved from url=(0049)file:///C:/Users/nakayama/Downloads/index_26.html -->
+<!-- saved from url=(0050)file:///C:/Users/nakayama/Downloads/index_251.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>M Trace. — PDF Workspace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-<link href="file:///C:/Users/nakayama/Downloads/index_files/css2" rel="stylesheet">
-<script src="./index_files/pdf.min.js.ダウンロード" crossorigin="anonymous"></script>
-<script src="./index_files/pdf-lib.min.js.ダウンロード" crossorigin="anonymous"></script>
-<script src="./index_files/jszip.min.js.ダウンロード" crossorigin="anonymous"></script>
+<link href="./index_files/css2" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
 <style>
   :root {
     /* 基本パレット */
@@ -1742,7 +1742,7 @@
   }
 </style>
 </head>
-<body class="empty-state-on">
+<body class="">
 
 <!-- Password Gate -->
 <div id="pw-gate" style="position: fixed; inset: 0px; background-color: rgb(26, 26, 26); display: none;">
@@ -1967,7 +1967,7 @@
   <div class="header-actions">
     <input type="file" id="file-input" accept="application/pdf,image/*,.docx,.xlsx,.pptx,.doc,.xls,.ppt" multiple="">
     <div class="sort-menu-wrap" id="sort-menu-wrap">
-      <button class="btn" id="btn-sort" title="整列" disabled="">
+      <button class="btn" id="btn-sort" title="整列">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M7 12h10M11 18h2"></path></svg>
         整列
       </button>
@@ -1990,10 +1990,10 @@
           <span>ゴミ箱</span>
           <button id="trash-empty-btn-nav">すべて削除</button>
         </div>
-        <div id="trash-list-nav"><div class="trash-item"><span class="trash-item-name" title="マニュアル抜粋【気中濃度測定】.pdf">マニュアル抜粋【気中濃度測定】.pdf</span><button class="trash-restore-btn">復元</button></div><div class="trash-item"><span class="trash-item-name" title="マニュアル抜粋【気中濃度測定】.pdf">マニュアル抜粋【気中濃度測定】.pdf</span><button class="trash-restore-btn">復元</button></div><div class="trash-item"><span class="trash-item-name" title="マニュアル抜粋【気中濃度測定】.pdf">マニュアル抜粋【気中濃度測定】.pdf</span><button class="trash-restore-btn">復元</button></div></div>
+        <div id="trash-list-nav"></div>
       </div>
     </div>
-    <button class="btn primary" id="btn-export" disabled="">
+    <button class="btn primary" id="btn-export">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"></path></svg>
       出力
     </button>
@@ -2003,7 +2003,7 @@
 
 <main>
   <!-- Empty state -->
-  <div class="empty-state-main" id="empty-state" style="display: flex;">
+  <div class="empty-state-main" id="empty-state" style="display: none;">
 
     <!-- 左上タグ -->
     <div class="top-tag-label">PDF WORKSPACE / MTRC-001</div>
@@ -2020,24 +2020,24 @@
   </div>
 
   <!-- Workspace -->
-  <div id="workspace" style="display: none;">
+  <div id="workspace" style="display: block;">
     <div class="section-title">
       <h2 id="section-heading">PAGE MAP</h2>
-      <span class="count" id="section-count">4 / 4 ページ出力</span>
+      <span class="count" id="section-count"></span>
     </div>
 
     <!-- Whiteboard -->
     <div class="page-grid" id="page-grid">
-      <div class="board-content" id="board-content" style="width: 800px; height: 600px;"><div class="page-card selected" data-idx="0" data-rotation="0" data-group="g_f_1778906751982_pvl1fy" data-group-pos="solo" data-orientation="portrait" style="--group-color: #1B4B3A; --group-glow: rgba(27, 75, 58, 0.15); width: 125px; left: 227px; top: 105px;"><div class="stack-shadow s3"></div><div class="stack-shadow s2"></div><div class="stack-shadow s1"></div><div class="stack-count-badge">4枚</div><div class="page-card-order">01-04</div><div title="注釈が含まれています" style="position: absolute; top: 32px; left: 8px; background: rgb(27, 75, 58); color: white; font-family: var(--mono); font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 2px; z-index: 10;">✎ 注釈</div><div class="rotation-badge">↻ 0°</div><div class="page-card-thumb"><canvas data-file-id="f_1778906751982_pvl1fy" data-page-num="1" data-rotation="0" data-entry-uid="pg_mp7v5ek1_pnll5u_1" width="0" height="0" style="display: none;"></canvas><img class="thumb-img" src="data:image/jpeg;base64,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"></div><div class="page-card-info"><span>束 4/4</span><span>ダブルクリックで詳細</span></div><div class="group-name-label" title="ダブルクリックで名前を編集" data-group-id="g_f_1778906751982_pvl1fy">マニュアル抜粋【気中濃度測定】</div></div></div>
+      <div class="board-content" id="board-content" style="width: 800px; height: 600px;"></div>
     </div>
   </div>
 </main>
 
 <footer>
   <div>
-    <span class="status-dot"></span><span id="status-text">保存しました (14:54:40)</span>
+    <span class="status-dot"></span><span id="status-text"></span>
   </div>
-  <div id="output-info">—</div>
+  <div id="output-info">出力なし</div>
 </footer>
 
 <script>
@@ -9257,16 +9257,16 @@ updateTrashUI();
 
 <!-- ゴミ箱ウィジェット -->
 <div class="trash-widget" id="trash-widget">
-  <div class="trash-panel open" id="trash-panel">
+  <div class="trash-panel" id="trash-panel">
     <div class="trash-panel-header">
       <span>ゴミ箱</span>
       <button id="trash-empty-btn">すべて削除</button>
     </div>
-    <div id="trash-list"><div class="trash-empty">ゴミ箱は空です</div></div>
+    <div id="trash-list"></div>
   </div>
   <button class="trash-btn" id="trash-btn" title="ゴミ箱">
     🗑️
-    <span class="trash-badge" id="trash-badge" style="display: none;">0</span>
+    <span class="trash-badge" id="trash-badge" style="display: flex;">2</span>
   </button>
 </div>
 
