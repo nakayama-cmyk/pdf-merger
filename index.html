@@ -557,6 +557,51 @@
     border-color: rgba(245, 243, 238, 0.85);
     color: rgba(245, 243, 238, 1);
   }
+
+  /* アップロードCTAボタン */
+  .upload-cta {
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 18px 40px;
+    border: 1px solid rgba(212, 208, 200, 0.35);
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+    z-index: 20;
+  }
+  .empty-state-inner:hover .upload-cta {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(212, 208, 200, 0.7);
+  }
+  .upload-cta-icon {
+    font-size: 20px;
+    color: rgba(245, 243, 238, 0.6);
+    line-height: 1;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .upload-cta-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(245, 243, 238, 0.85);
+  }
+  .upload-cta-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(212, 208, 200, 0.4);
+  }
   .hint {
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
@@ -2011,10 +2056,15 @@
 
     <!-- メインカード（プレート全体クリックでファイル選択） -->
     <div class="empty-state-inner" onclick="document.getElementById(&#39;file-input&#39;).click()">
+      <div class="upload-cta">
+        <div class="upload-cta-icon">＋</div>
+        <div class="upload-cta-label">ファイルをアップロード</div>
+        <div class="upload-cta-sub">PDF / IMAGE / OFFICE</div>
+      </div>
     </div>
 
     <!-- プレート下のメッセージ -->
-    <div class="top-message">
+    <div class="top-message" style="display:none;">
       <span class="accent">クリックまたはドラッグ＆ドロップ</span><br>
       PDF / IMAGE
     </div>
